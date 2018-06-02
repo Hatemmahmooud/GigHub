@@ -1,0 +1,19 @@
+﻿@model IEnumerable<CourseProject.Models.ApplicationUser>
+@{
+    ViewBag.Title = "Follow";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Who i'm following</h2>
+
+<ul>
+    @foreach (var followee in Model)
+    {
+
+       <li>@followee.Name </li>
+
+    }
+   
+
+</ul>
+

@@ -1,0 +1,96 @@
+﻿@model CourseProject.ViewModels.GigsViewModel
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<h1 > @Model.Heading </h1>
+<ul class="gig voffset4">
+
+    @foreach (var gig in Model.Gigs)
+    {
+        <li>
+            <div class="date">
+                <div class="month">
+                    @gig.DateTime.ToString("MMM")
+                </div>
+                <div class="day">
+                    @gig.DateTime.ToString("d ")
+
+                </div>
+            </div>
+            <div class="details">
+                <span class="artist">
+
+
+                    @gig.Artist.Name
+                    @if (gig.IsCanceled)
+                    {
+
+                        <span class="label label-warning">Canceled</span>
+
+                    }
+
+                    @if (gig.ArtistID != (string)Session["User"] && Model.Authenticated)
+
+                    {  <button follow-id="@gig.ArtistID" class="btn btn-link btn-sm js-Follow">Follow</button> }
+                </span>
+                <span class="genre">
+                    @gig.genre.name
+                </span>
+                @if (gig.ArtistID != (string)Session["User"] && Model.Authenticated&&!gig.IsCanceled)
+                {<button gig-id="@gig.id" class="btn btn-default btn-sm pull-right js-Attendance  " style=""> Going?</button> }
+
+            </div>
+        </li>
+
+    }
+</ul>
+   
+@section scripts
+    {
+      <script>
+
+
+          $(document).ready(function () {
+              $(".js-Attendance").click(function (e) {
+                  var button = $(e.target);
+            
+                  
+                  $.post("/api/attendances", {GigID:button.attr("gig-id")} )
+                   .done(function () {
+
+                       button.removeClass("btn-default")
+                           .addClass("btn-info")
+                           .prop("disabled",true)
+                           .text("Going");
+
+                   })
+                   .fail(function () {
+
+                       alert("Something failed");
+
+                   });
+              });
+
+              $(".js-Follow").click(function (e) {
+                  var button = $(e.target);
+                  $.post("/api/Followings", { FolloweeID: button.attr("follow-id") })
+                  .done(function () {
+
+                      button.text("Following")
+                          .prop("disabled", true);
+
+                  })
+                  .fail(function () {
+
+                      alert("Failed");
+                  });
+
+              })
+
+          });
+
+      </script>
+    
+    
+    }
